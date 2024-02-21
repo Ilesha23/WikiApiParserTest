@@ -12,7 +12,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.wikiapiparsertest.ui.theme.WikiApiParserTestTheme
@@ -24,6 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel = hiltViewModel<MainViewModel>()
+            var textFieldState by remember { mutableStateOf("") }
             val textState = viewModel.state.collectAsState().value
 
             WikiApiParserTestTheme {
@@ -37,8 +43,13 @@ class MainActivity : ComponentActivity() {
                             .verticalScroll(rememberScrollState())
                     ) {
                         Row {
+                            TextField(value = textFieldState, onValueChange = {
+                                textFieldState = it
+                            })
+                        }
+                        Row {
                             Button(onClick = {
-                                viewModel.getRawData()
+                                viewModel.getRawData(textFieldState)
                             }) {
                                 Text(text = "Get data")
                             }

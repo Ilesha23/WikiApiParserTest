@@ -25,10 +25,10 @@ class MainViewModel @Inject constructor(
     private val _parsedTextState = MutableStateFlow("")
     val parsedTextState = _parsedTextState.asStateFlow()
 
-    fun getRawData() {
+    fun getRawData(pageName: String?) {
         viewModelScope.launch {
             _state.update { "Loading" }
-            repository.getFromWiki()
+            repository.getFromWiki(pageName)
                 .collectLatest { result ->
                     if (result.isSuccess) {
                         _rawTextState.update {
@@ -58,6 +58,10 @@ class MainViewModel @Inject constructor(
         _state.update { "" }
         _rawTextState.update { "" }
         _parsedTextState.update { "" }
+    }
+
+    fun search() {
+
     }
 
 }
