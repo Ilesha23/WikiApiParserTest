@@ -19,7 +19,7 @@ class WikiRepositoryImpl @Inject constructor(
         return flow {
             try {
                 val response = if (!pageName.isNullOrBlank()) {
-                    val name = pageName.replace(" ", "_").lowercase(Locale.getDefault())
+                    val name = pageName.replace(" ", "_")
                     api.get(page = name)
                 } else {
                     api.get()
