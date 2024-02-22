@@ -44,6 +44,17 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun searchPage(pageName: String) {
+        viewModelScope.launch {
+            _state.update { "Loading" }
+            repository.search(pageName)
+                .collectLatest { result ->
+                    _state.update { result.toString() }
+                    _rawTextState.update { result.toString() }
+                }
+        }
+    }
+
     fun parse() {
         viewModelScope.launch {
             _state.update { "Parsing" }

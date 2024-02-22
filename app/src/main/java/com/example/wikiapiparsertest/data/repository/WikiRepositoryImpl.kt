@@ -1,14 +1,11 @@
 package com.example.wikiapiparsertest.data.repository
 
-import androidx.compose.ui.text.toLowerCase
 import com.example.wikiapiparsertest.data.remote.WikiApi
-import com.example.wikiapiparsertest.data.remote.response.WikiResponseDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
-import java.util.Locale
 import javax.inject.Inject
 
 class WikiRepositoryImpl @Inject constructor(
@@ -20,9 +17,13 @@ class WikiRepositoryImpl @Inject constructor(
             try {
                 val response = if (!pageName.isNullOrBlank()) {
                     val name = pageName.replace(" ", "_")
-                    api.get(page = name)
+                    withContext(Dispatchers.IO) {
+                        api.get(page = name)
+                    }
                 } else {
-                    api.get()
+                    withContext(Dispatchers.IO) {
+                        api.get()
+                    }
                 }
                 if (response.parse.text.text.isNotBlank()) {
                     emit(Result.success(response.parse.text.text))
@@ -42,6 +43,35 @@ class WikiRepositoryImpl @Inject constructor(
                 return@withContext e.message.orEmpty()
             }
         }
+
+    override suspend fun search(pageName: String?): Flow<Result<String>> {
+        return flow {
+            try {
+                val response = withContext(Dispatchers.IO) { api.search(query = pageName ?: "") }
+                val pageId = response.query.search.firstOrNull()?.pageid
+                    ?: throw NoSuchElementException("No page ID found")
+                val page = withContext(Dispatchers.IO) { api.getPageById(id = pageId) }
+                val x9232 = page.query.pages[pageId.toString()]
+                val result = x9232?.extract ?: ""
+                emit(Result.success(result))
+            } catch (e: Exception) {
+                emit(Result.failure(e))
+            }
+        }
+    }
+
+//    override suspend fun getPageById(id: Int): Flow<Result<String>> {
+//        return flow {
+//            try {
+//                withContext(Dispatchers.IO) {
+//                    val response = api.getPageById(id = id)
+//                    emit(Result.success(response.query.pages.wtf.extract))
+//                }
+//            } catch (e: Exception) {
+//                emit(Result.failure(e))
+//            }
+//        }
+//    }
 
 
 }

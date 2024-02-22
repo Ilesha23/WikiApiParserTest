@@ -3,9 +3,11 @@ package com.example.wikiapiparsertest.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -42,14 +44,29 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
                     ) {
-                        Row {
-                            TextField(value = textFieldState, onValueChange = {
-                                textFieldState = it
-                            })
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            TextField(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                placeholder = {
+                                              Text(text = "search...")
+                                },
+                                value = textFieldState,
+                                onValueChange = {
+                                    textFieldState = it
+                                }
+                            )
                         }
-                        Row {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
                             Button(onClick = {
-                                viewModel.getRawData(textFieldState)
+                                viewModel.searchPage(textFieldState)
                             }) {
                                 Text(text = "Get data")
                             }
