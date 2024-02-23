@@ -58,9 +58,15 @@ class MainViewModel @Inject constructor(
     fun parse() {
         viewModelScope.launch {
             _state.update { "Parsing" }
-            _parsedTextState.update {
-                repository.parse(_rawTextState.value)
+            val result = StringBuilder()
+            val map = repository.parse(_rawTextState.value)
+            map.forEach { (key, value) ->
+                result.append("$key\n$value\n")
             }
+            _parsedTextState.update {
+                result.toString()
+            }
+            val a = repository.parse(_rawTextState.value)
             _state.update { _parsedTextState.value }
         }
     }

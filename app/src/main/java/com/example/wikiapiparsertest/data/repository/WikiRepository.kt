@@ -7,7 +7,7 @@ interface WikiRepository {
 
     suspend fun getFromWiki(pageName: String?): Flow<Result<String>>
 
-    suspend fun parse(html: String): String
+    suspend fun parse(html: String): Map<String, String>
 
     suspend fun search(pageName: String?): Flow<Result<String>>
 
